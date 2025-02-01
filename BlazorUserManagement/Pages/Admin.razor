@@ -1,0 +1,50 @@
+﻿@page "/admin"
+@using BlazorUserManagement.Models
+@using BlazorUserManagement.Services
+@inject UserService UserService
+
+<h3>Панель Администратора</h3>
+
+@if (users == null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Имя</th>
+            <th>Роль</th>
+            <th>Действие</th>
+        </tr>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Email</td>
+                <td>@user.Name</td>
+                <td>@user.Role</td>
+                <td><button @onclick="() => DeleteUser(user.Id)">Удалить</button></td>
+            </tr>
+        }
+    </table>
+}
+
+@code {
+    private List<UserDto> users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetUsersAsync();
+    }
+
+    private async Task DeleteUser(int id)
+    {
+        if (await UserService.DeleteUserAsync(id))
+        {
+            users = await UserService.GetUsersAsync();
+        }
+    }
+}
