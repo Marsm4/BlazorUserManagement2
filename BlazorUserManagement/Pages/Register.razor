@@ -7,7 +7,6 @@
 <h3>Регистрация</h3>
 
 <EditForm Model="@registerUser" OnValidSubmit="PerformRegistration">
-
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -39,10 +38,22 @@
 
     private async Task PerformRegistration()
     {
+        // Включаем проверку перед отправкой на сервер
+        if (await UserService.CheckIfEmailExistsAsync(registerUser.Email))
+        {
+            // Показать предупреждение, если почта уже существует
+            // Например, можно использовать компонент для отображения ошибки
+            Console.WriteLine("Этот email уже существует.");
+            return;
+        }
+
         if (await UserService.RegisterUserAsync(registerUser))
         {
             Navigation.NavigateTo("/login");
         }
+        else
+        {
+            Console.WriteLine("Ошибка при регистрации.");
+        }
     }
 }
-

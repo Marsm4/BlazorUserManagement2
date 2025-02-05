@@ -61,6 +61,11 @@ namespace BlazorUserManagement.Services
             var response = await _http.DeleteAsync($"users/{id}");
             return response.IsSuccessStatusCode;
         }
+        public async Task<bool> CheckIfEmailExistsAsync(string email)
+        {
+            var response = await _http.GetAsync($"users/emailExists?email={email}");
+            return response.IsSuccessStatusCode && await response.Content.ReadFromJsonAsync<bool>();
+        }
 
     }
 }
