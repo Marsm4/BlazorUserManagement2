@@ -20,13 +20,6 @@ namespace BlazorUserManagement.Services
             return response.IsSuccessStatusCode;
         }
 
-        //public async Task<UserDto> LoginAsync(LoginDto loginDto)
-        //{
-        //    var response = await _http.PostAsJsonAsync("users/login", loginDto);
-        //    if (response.IsSuccessStatusCode)
-        //        return await response.Content.ReadFromJsonAsync<UserDto>();
-        //    return null;
-        //}
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
             var response = await _http.PostAsJsonAsync("users/login", loginDto);
@@ -35,11 +28,9 @@ namespace BlazorUserManagement.Services
             {
                 var user = await response.Content.ReadFromJsonAsync<UserDto>();
 
-                // Здесь можно обработать приветственное сообщение, которое вернуло API
+                // Приветствие для обычных пользователей
                 if (user.Role == "User")
                 {
-                    // Если это обычный пользователь, вы можете вернуть сообщение как часть ответа.
-                    // Например, просто вывести его в консоль или каким-либо образом отобразить.
                     Console.WriteLine($"Привет, дорогой {user.Name}!");
                 }
 
@@ -49,7 +40,6 @@ namespace BlazorUserManagement.Services
             var error = await response.Content.ReadAsStringAsync();
             throw new Exception($"Ошибка входа: {error}");
         }
-
 
         public async Task<List<UserDto>> GetUsersAsync()
         {
@@ -61,11 +51,24 @@ namespace BlazorUserManagement.Services
             var response = await _http.DeleteAsync($"users/{id}");
             return response.IsSuccessStatusCode;
         }
+
         public async Task<bool> CheckIfEmailExistsAsync(string email)
         {
             var response = await _http.GetAsync($"users/emailExists?email={email}");
             return response.IsSuccessStatusCode && await response.Content.ReadFromJsonAsync<bool>();
         }
 
+        public async Task<bool> AddUserAsync(RegisterUserDto userDto)
+        {
+            var response = await _http.PostAsJsonAsync("users/register", userDto);
+            return response.IsSuccessStatusCode;
+        }
+
+        // Метод для обновления пользователя через API
+        public async Task<bool> UpdateUserAsync(int id, UpdateUserDto userDto)
+        {
+            var response = await _http.PutAsJsonAsync($"users/{id}", userDto);
+            return response.IsSuccessStatusCode;
+        }
     }
 }
