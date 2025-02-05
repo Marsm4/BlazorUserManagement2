@@ -30,12 +30,26 @@ namespace BlazorUserManagement.Services
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
             var response = await _http.PostAsJsonAsync("users/login", loginDto);
+
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<UserDto>();
+            {
+                var user = await response.Content.ReadFromJsonAsync<UserDto>();
+
+                // Здесь можно обработать приветственное сообщение, которое вернуло API
+                if (user.Role == "User")
+                {
+                    // Если это обычный пользователь, вы можете вернуть сообщение как часть ответа.
+                    // Например, просто вывести его в консоль или каким-либо образом отобразить.
+                    Console.WriteLine($"Привет, дорогой {user.Name}!");
+                }
+
+                return user;
+            }
 
             var error = await response.Content.ReadAsStringAsync();
             throw new Exception($"Ошибка входа: {error}");
         }
+
 
         public async Task<List<UserDto>> GetUsersAsync()
         {
