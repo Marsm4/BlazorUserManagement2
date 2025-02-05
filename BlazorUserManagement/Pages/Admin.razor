@@ -44,7 +44,9 @@ else
     {
         if (await UserService.DeleteUserAsync(id))
         {
-            users = await UserService.GetUsersAsync();
+            users.RemoveAll(u => u.Id == id);
+            StateHasChanged();
         }
     }
+
 }

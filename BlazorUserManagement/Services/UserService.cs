@@ -20,12 +20,21 @@ namespace BlazorUserManagement.Services
             return response.IsSuccessStatusCode;
         }
 
+        //public async Task<UserDto> LoginAsync(LoginDto loginDto)
+        //{
+        //    var response = await _http.PostAsJsonAsync("users/login", loginDto);
+        //    if (response.IsSuccessStatusCode)
+        //        return await response.Content.ReadFromJsonAsync<UserDto>();
+        //    return null;
+        //}
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
             var response = await _http.PostAsJsonAsync("users/login", loginDto);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadFromJsonAsync<UserDto>();
-            return null;
+
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Ошибка входа: {error}");
         }
 
         public async Task<List<UserDto>> GetUsersAsync()
@@ -38,5 +47,6 @@ namespace BlazorUserManagement.Services
             var response = await _http.DeleteAsync($"users/{id}");
             return response.IsSuccessStatusCode;
         }
+
     }
 }
